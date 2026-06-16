@@ -6,7 +6,7 @@ import { Button } from "./ui/Button";
 const BYPASS_AUTH = process.env.NEXT_PUBLIC_BYPASS_AUTH === "true";
 
 interface Project {
-    id: string;
+    id: number;
     title: string;
     description: string;
     tags: string[] | string;
@@ -59,9 +59,10 @@ export function ProjectCreateForm({ onClose, onSuccess }: ProjectCreateFormProps
     const [images, setImages] = useState<Image[]>([]);
     const [projectImages, setProjectImages] = useState<Image[]>([]);
     const [editingProject, setEditingProject] = useState<Project | null>(null);
-    const [deletingId, setDeletingId] = useState<string | null>(null);
+    const [deletingProjectId, setDeletingProjectId] = useState<number | null>(null);
+    const [deletingImageId, setDeletingImageId] = useState<string | null>(null);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
+    const [projectToDelete, setProjectToDelete] = useState<number | null>(null);
     const [actionMessage, setActionMessage] = useState<{ type: "success" | "error", text: string } | null>(null);
 
     //Estados para manejo de imágenes
@@ -79,7 +80,8 @@ export function ProjectCreateForm({ onClose, onSuccess }: ProjectCreateFormProps
     // Fetch imágenes al montar 
     useEffect(() => {
         if (activeTab === "images") {
-            fetchProjectImages("");
+            
+            fetchProjectImages();
         }
     }, [activeTab]);
 
@@ -90,7 +92,8 @@ export function ProjectCreateForm({ onClose, onSuccess }: ProjectCreateFormProps
         }
     }, []);
 
-    const fetchProjectImages = async (projectId: string) => {
+    const fetchProjectImages = async () => {
+        
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/getAllImages`);
             if (res.ok) {
@@ -118,7 +121,7 @@ export function ProjectCreateForm({ onClose, onSuccess }: ProjectCreateFormProps
 
     // Eliminar imagen
     const handleDeleteImage = async (imageId: string) => {
-        setDeletingId(imageId);
+        setDeletingImageId(imageId);
 
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/deleteImage/${imageId}`, {
@@ -136,7 +139,7 @@ export function ProjectCreateForm({ onClose, onSuccess }: ProjectCreateFormProps
             setActionMessage({ type: "error", text: err instanceof Error ? err.message : "Error al eliminar imagen" });
             setTimeout(() => setActionMessage(null), 3000);
         } finally {
-            setDeletingId(null);
+            setDeletingImageId(null);
         }
     };
 
@@ -169,7 +172,10 @@ export function ProjectCreateForm({ onClose, onSuccess }: ProjectCreateFormProps
             setShowImageModal(false);
 
             // Refrescar lista de imágenes
-            fetchProjectImages(editingProject?.id || "");
+
+            fetchProjectImages()
+
+
         } catch (err) {
             setError(err instanceof Error ? err.message : "Error al subir imagen");
         }
@@ -282,7 +288,7 @@ export function ProjectCreateForm({ onClose, onSuccess }: ProjectCreateFormProps
         const id = projectToDelete;
         setShowDeleteModal(false);
         setProjectToDelete(null);
-        setDeletingId(id);
+        setDeletingProjectId(id);
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/deleteProject/${id}`, {
                 method: "DELETE",
@@ -297,11 +303,11 @@ export function ProjectCreateForm({ onClose, onSuccess }: ProjectCreateFormProps
             setActionMessage({ type: "error", text: err instanceof Error ? err.message : "Error al eliminar" });
             setTimeout(() => setActionMessage(null), 3000);
         } finally {
-            setDeletingId(null);
+            setDeletingProjectId(null);
         }
     };
 
-    const confirmDelete = (id: string) => {
+    const confirmDelete = (id: number) => {
         setProjectToDelete(id);
         setShowDeleteModal(true);
     };
@@ -465,9 +471,9 @@ export function ProjectCreateForm({ onClose, onSuccess }: ProjectCreateFormProps
                                                                 size="sm"
                                                                 variant="destructive"
                                                                 onClick={() => confirmDelete(project.id)}
-                                                                disabled={deletingId === project.id}
+                                                                 disabled={deletingProjectId === project.id}
                                                             >
-                                                                {deletingId === project.id ? "Eliminando..." : "Eliminar"}
+                                                                 {deletingProjectId === project.id ? "Eliminando..." : "Eliminar"}
                                                             </Button>
                                                         </td>
                                                     </tr>
@@ -548,9 +554,9 @@ export function ProjectCreateForm({ onClose, onSuccess }: ProjectCreateFormProps
                                                                 size="sm"
                                                                 variant="destructive"
                                                                 onClick={() => handleDeleteImage(image.id)}
-                                                            // disabled={deletingId === image.id} #TODO Volver a activar esto cuando se validen que no hay ids repetidos
+                                                             // disabled={deletingImageId === image.id} #TODO Volver a activar esto cuando se validen que no hay ids repetidos
                                                             >
-                                                                {deletingId === image.id ? "Eliminando..." : "Eliminar"}
+                                                                 {deletingImageId === image.id ? "Eliminando..." : "Eliminar"}
                                                             </Button>
                                                         </td>
                                                     </tr>
