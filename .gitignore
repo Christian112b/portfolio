@@ -1,5 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+# VS Code
+.vscode
+
 # dependencies
 /node_modules
 /.pnp
@@ -39,3 +42,15 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Node Modules
+node_modules/
+app/frontend/node_modules/
+app/backend/node_modules/
+
+
+# Next.js cache
+app/frontend/.next/
+app/frontend/.next/dev/
+app/frontend/.next/dev/cache/
+app/frontend/.next/dev/cache/*
