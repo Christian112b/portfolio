@@ -599,7 +599,7 @@ export function ProjectCreateForm({ onClose, onSuccess }: ProjectCreateFormProps
                                         <div className="flex gap-2">
                                             <Button
                                                 type="button"
-                                                variant={formData.project_type === "web" ? "default" : "outline"}
+                                                variant={formData.project_type === "web" ? "outline" : "primary"}
                                                 onClick={() => {
                                                     setFormData(prev => ({ ...prev, project_type: "web", live_url: prev.live_url || "", repo_url: prev.repo_url || "" }));
                                                 }}
@@ -609,7 +609,7 @@ export function ProjectCreateForm({ onClose, onSuccess }: ProjectCreateFormProps
                                             </Button>
                                             <Button
                                                 type="button"
-                                                variant={formData.project_type !== "web" ? "default" : "outline"}
+                                                variant={formData.project_type === "web" ? "outline" : "primary"}
                                                 onClick={() => {
                                                     setFormData(prev => ({ ...prev, project_type: "other", live_url: "", repo_url: "" }));
                                                 }}
